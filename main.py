@@ -6,8 +6,8 @@ LABEL_IDENTIFIER = 's004'
 
 #read the data to a matrix
 raw_data = np.loadtxt(open("DSL-StrongPasswordData.csv", "rb"), dtype='string',  delimiter=",", skiprows=1)
-#limit data, make sure it only contains exactly two different labels
-data = raw_data[400:1200,]
+#limit data, make sure it only contains exactly two different labels over a total of 800 rows
+data = raw_data[800:1600,]
 
 #scramble rows, then split inte training and validation sets
 np.random.shuffle(data)
@@ -45,3 +45,13 @@ pred = nn.predict(valid_values)
 
 #print accuracy
 print 'accuracy: %f' % (np.mean(pred == valid_labels))
+
+# Save to csv for plot, uncomment to enable
+'''
+f = open('k-acc_linear_s004-s005.csv', 'w')
+for k in range(1, 201):
+	nn.train(train_values, train_labels, k)
+	pred = nn.predict(valid_values)
+	f.write(str(k) + ',' + str(np.mean(pred == valid_labels)) + '\n')
+f.close()
+'''
