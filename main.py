@@ -1,6 +1,5 @@
 import numpy as np
 from NearestNeighbor import *
-from Utilities import *
 
 #read first 800 samples (first 2 persons) to a matrix
 raw_data = np.loadtxt(open("DSL-StrongPasswordData.csv", "rb"), dtype='string',  delimiter=",", skiprows=1)
