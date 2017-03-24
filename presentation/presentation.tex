@@ -1,4 +1,6 @@
 \documentclass{beamer}
+\usepackage{graphicx, float}
+\usepackage{tikz,pgf,pgfplots,pgfplotstable,csvsimple}
 %
 % Choose how your presentation looks.
 %
@@ -17,7 +19,7 @@
 \usepackage[utf8x]{inputenc}
 \usepackage{verbatim, hyperref, tabularx}
 %\usepackage[font=small,skip=0pt]{caption}
-\title[D7041E]{2 Class Classification for password input pehaviour using kNN}
+\title[D7041E]{2 Class Classification for password input behaviour using kNN}
 \author{Mikael Hedkvist}
 \institute{}
 \date{\today}
@@ -34,30 +36,115 @@
 
 \section{2 class classification problem}
 \begin{frame}{2 class classfication problem}
+	The data:
 	\begin{itemize}
-		\item stuff
+		\item Keystroke timing for typing the password \texttt{.tei5Roanl}
+		\item 51 different subjects
+		\item 400 inputs per subject
+		\item 31 dimensions
+	\end{itemize}
+	The problem:
+	\begin{itemize}
+		\item Distinguish between subjects in a dataset of 2 subjects.
 	\end{itemize}
 \end{frame}
 
 \section{kNN method}
 \begin{frame}{kNN method}
-	\begin{itemize}
-		\item stuff
-	\end{itemize}
+	k Nearest Neighbors using L2 distance.
+	\begin{enumerate}
+		\item Limit data to subset containing only two subjects.
+		\item Parse data into something useful:
+		\begin{itemize}
+			\item Labels into flat matrix of discrete values.
+			\item Data into float matrix.
+		\end{itemize}
+		\item Two subjects = 800 rows total:	
+		\begin{itemize}
+			\item Training set of 600 rows.
+			\item Validation set of 200 rows.
+		\end{itemize}
+		\item Cross fold validate to find best $k$ (3 folds of 200 rows each).
+		\item Train \texttt{NearestNeighbor} with training set.
+		\item Predict labels of validation set using L2 distance.
+	\end{enumerate}
 \end{frame}
 
 \section{Results}
 \begin{frame}{Results}
-	\begin{itemize}
-		\item stuff
-	\end{itemize}
+	\begin{figure}[h]
+        \centering
+        \begin{tikzpicture}[scale = 1.0]
+        \begin{axis}[
+            ylabel = accuracy,
+            xlabel = k,
+            legend pos = north east]
+        \addplot table[y=acc, x=k, col sep = comma]{csv/k-acc_linear_s002-s003.csv};
+        \addlegendentry{s002 \& s003}
+        \end{axis}
+        \end{tikzpicture}
+        \caption{Accuracy for subjects s002 and s003 for $k=\{1-200\}$.}
+        \label{fig:1}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Results}
+	\begin{figure}[h]
+        \centering
+        \begin{tikzpicture}[scale = 1.0]
+        \begin{axis}[
+            ylabel = accuracy,
+            xlabel = k,
+            legend pos = north east]
+        \addplot table[y=acc, x=k, col sep = comma]{csv/k-acc_linear_s003-s004.csv};
+        \addlegendentry{s003 \& s004}
+        \end{axis}
+        \end{tikzpicture}
+        \caption{Accuracy for subjects s003 and s004 for $k=\{1-200\}$.}
+        \label{fig:1}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Results}
+	\begin{figure}[h]
+        \centering
+        \begin{tikzpicture}[scale = 1.0]
+        \begin{axis}[
+            ylabel = accuracy,
+            xlabel = k,
+            legend pos = north east]
+        \addplot table[y=acc, x=k, col sep = comma]{csv/k-acc_linear_s004-s005.csv};
+        \addlegendentry{s004 \& s005}
+        \end{axis}
+        \end{tikzpicture}
+        \caption{Accuracy for subjects s004 and s005 for $k=\{1-200\}$.}
+        \label{fig:1}
+    \end{figure}
 \end{frame}
 
 \section{Conclusions}
 \begin{frame}{Conclusions}
+	According to the results low values for $k$ generally produces the best results, and even for high values the accuracy converges only a few percent below the maximum.
+
+	kNN proved to have generally high accuracy for a 2 class classification problem, however...
 	\begin{itemize}
-		\item stuff
+		\item accuracy is dependant on the subjects:
+		\begin{itemize}
+			\item more distinct patterns are easier to predict.
+			\item subjects with similar behaviour will yield lower accuracy.
+		\end{itemize}
+		\item this method can't detect an unknown attacker:	
+		\begin{itemize}
+			\item new input will always be labeled to the closest match in the known data.
+			\item detecting if the new subject is not in the known data is a different problem.
+			\item making clusters for subjects and setting max deviation thresholds would be more practical for this.
+		\end{itemize}
 	\end{itemize}
+\end{frame}
+
+\section{The code}
+\begin{frame}{The code}
+	\texttt{https://github.com/mjolnir92/D7041E\_2-class-classifier.git}
 \end{frame}
 
 \end{document}
